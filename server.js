@@ -30,12 +30,39 @@ app.post("/villages", (req, res) => {
   });
 });
 
+app.put("/villages/:id", (req, res) => {
+  const { name, state, population } = req.body;
+  db.run(
+    "UPDATE villages SET name = ?, state = ?, population = ? WHERE id = ?",
+    [name, state, population, req.params.id],
+    (err) => {
+      if (err) return res.json({ error: err.message });
+      res.json({ message: "Village update ho gaya!" });
+    }
+  );
+});
+
 // DELETE - village hatao
 app.delete("/villages/:id", (req, res) => {
   db.run("DELETE FROM villages WHERE id = ?", [req.params.id], (err) => {
     if (err) return res.json({ error: err.message });
     res.json({ message: "Village delete ho gaya!" });
   });
+});
+app.get("/villages/:id", (req, res) => {
+  db.get(
+    "SELECT * FROM villages WHERE id = ?",
+    [req.params.id],
+    (err, row) => {
+      if (err) return res.json({ error: err.message });
+
+      if (!row) {
+        return res.json({ message: "Village nahi mila" });
+      }
+
+      res.json(row);
+    }
+  );
 });
 
 app.listen(3000, () => {
