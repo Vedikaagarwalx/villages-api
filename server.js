@@ -6,10 +6,19 @@ app.use(express.json());
 
 // GET - saare villages
 app.get("/villages", (req, res) => {
-  db.all("SELECT * FROM villages", [], (err, rows) => {
-    if (err) return res.json({ error: err.message });
-    res.json(rows);
-  });
+  const { state } = req.query;
+  
+  if (state) {
+    db.all("SELECT * FROM villages WHERE state = ?", [state], (err, rows) => {
+      if (err) return res.json({ error: err.message });
+      res.json(rows);
+    });
+  } else {
+    db.all("SELECT * FROM villages", [], (err, rows) => {
+      if (err) return res.json({ error: err.message });
+      res.json(rows);
+    });
+  }
 });
 
 // POST - naya village add karo
